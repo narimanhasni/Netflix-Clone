@@ -1,48 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zovie</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <a href="index.html">
+        <h1 class="logo">Z<span class="logocolor">ovie</span></h1>
+      </a>
+      <form id="form" onsubmit="searchMovie(event)">
+        <input type="text" id="search" class="search" placeholder="Search..." />
+      </form>
+      <div class="sort-buttons">
+        <select name="" id="filter">
+          <option value="Default" disabled selected>Sort</option>
+          <option value="By Release Date ">Sort by Release Date</option>
+          <option value="By Rating">Rating</option>
+        </select>
+       
+      </div>
+      
+    </header>
+    <main id="main"></main>
 
-<head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Kanto Pokedex</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="https://kit.fontawesome.com/c8e4d183c2.js" crossorigin="anonymous"></script>
-        <script src="app.js" defer></script>
-</head>
-        <nav id="Home">
-                <ul class="nav__links">
-                        <li class="nav__links"><a href="#Home">Home</a></li>
-                        <li class="nav__links"><a href="#pokedex">Pokedex</a></li>
-                        <li class="nav__links"><a href="#About">About</a></li>
-                </ul>
-        </nav>
-<body>
-        <div class="pokedex__container">
-                <div class="search__row">
-                        <div class="search__container">
-                                <input id="search" type="search" placeholder="Who's That Pokemon?"
-                                        oninput="searchPokemon()">
-                                <div class="search__button--container">
-                                        <i class="fa fa-search search__button"></i>
-                                </div>
-                        </div>
-                </div>
-                <div id="pokedex">
-                        <div class="loader__container">
-                                <img id="loader" src="assets/pokeball--white.png" alt="Loading Pokeball">
-                                <h1>Loading...</h1>
-                        </div>
-                </div>
-        </div>
-        <footer>
-                <nav id="About">
-                        <ul class="nav__links">
-                                <li class="nav__links"><a href="#Home">Home</a></li>
-                                <li class="nav__links"><a href="#pokedex">Pokedex</a></li>
-                                <li class="nav__links"><a href="#About">About</a></li>
-                        </ul>
-                </nav>
-        </footer>
-</body>
-
+    <script src="app.js"></script>
+  </body>
 </html>
