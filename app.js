@@ -1,98 +1,89 @@
-let allPokemon = []; // Declare this globally
+const API_URL =
+  "https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=539565c7581c473ffa0b2f312a86eb8a&page=1";
+const SEARCH_URL =
+  "https://api.themoviedb.org/3/search/movie?api_key=539565c7581c473ffa0b2f312a86eb8a&query=";
+const IMAGE_PATH = "https://image.tmdb.org/t/p/w1280/";
 
-const getPokemon = () => {
-  const promises = Array.from({ length: 151 }, (_, i) => {
-    const url = `https://pokeapi.co/api/v2/pokemon/${i + 1}`;
-    return fetch(url).then((response) => response.json());
-  });
+const form = document.getElementById("form");
+const search = document.getElementById("search");
+const main = document.getElementById("main");
+const filterSelect = document.getElementById("filter");
 
-  Promise.all(promises).then((results) => {
-    allPokemon = results.map((data) => ({
-      image: data.sprites.front_default,
-      id: data.id,
-      name: data.name,
-      height: data.height,
-      weight: data.weight,
-      ability: data.abilities[0].ability.name,
-      atk: data.stats[1].base_stat,
-      hp: data.stats[0].base_stat,
-      def: data.stats[2].base_stat,
-      spa: data.stats[3].base_stat,
-      spd: data.stats[4].base_stat,
-      speed: data.stats[5].base_stat,
-    }));
-    displayPokemon(allPokemon);
-  });
-};
+let movies = []; // declare movies array to store data from API
 
-const searchPokemon = () => {
-  const searchText = document.getElementById("search").value.toLowerCase();
-  const filteredPokemon = allPokemon.filter((pokemon) =>
-    pokemon.name.toLowerCase().includes(searchText)
+getMovies(API_URL);
+async function getMovies(url) {
+  const res = await fetch(url);
+  const data = await res.json();
+  movies = data.results; // store data in movies array
+  displayMovies(movies);
+}
+
+function displayMovies(movies) {
+  main.innerHTML = "";
+  for (let i = 0; i < movies.length; i++) {
+    const { title, poster_path, vote_average, overview } = movies[i];
+    const moviesElement = document.createElement("div");
+    moviesElement.classList.add("movie");
+    moviesElement.innerHTML = `
+        <img src="${IMAGE_PATH + poster_path}" alt="${title}" />
+        <div class="movie-info">
+          <h3>${title}</h3>
+          <span class="${getClassesByRating(
+            vote_average
+          )}"> ${vote_average}</span>
+          <div class="overview">
+            <h3>Overview</h3>
+            ${overview} 
+          </div>
+        </div>`;
+
+    main.appendChild(moviesElement);
+  }
+}
+
+filterSelect.addEventListener("change", () => {
+  const selectedOption = filterSelect.value;
+  let sortedMovies;
+
+  if (selectedOption === "By Release Date ") {
+    sortedMovies = sortMoviesByDate(movies);
+  } else if (selectedOption === "By Rating") {
+    sortedMovies = sortMoviesByRating(movies);
+  } else {
+    // Handle Default case here
+    sortedMovies = movies;
+  }
+
+  displayMovies(sortedMovies);
+});
+
+function sortMoviesByDate(movies) {
+  return movies.sort(
+    (a, b) => new Date(b.release_date) - new Date(a.release_date)
   );
-  displayPokemon(filteredPokemon);
-};
+}
 
-const displayPokemon = (pokemon) => {
-  const pokemonString = pokemon
-    .map(
-      (singlePokemon) => `
-<div class="individual-pokemon">
-  <div class="pokemon__container">
-    <figure class="pokemon-img__wrapper">
-      <img class="pokemon-img" src="${singlePokemon.image}" alt="${singlePokemon.name}">
-    </figure>
-    <span class="pokemon-num">No${singlePokemon.id}</span>
-    <h2 class="pokemon-name">${singlePokemon.name.toUpperCase()}</h2>
-  </div>
-  <div class="pokemon-description">
-    <div class="pokemon-height__container">
-      <h4>Height: </h4>
-      <h4 class="pokemon-height">${singlePokemon.height} decimetres</h4>
-    </div>
-    <div class="pokemon-weight__container">
-      <h4>Weight: </h4>
-      <h4 class="pokemon-weight">${singlePokemon.weight} hectograms</h4>
-    </div>
-    <div class="ability__container">
-      <h4>Ability: </h4>
-      <h4 class="pokemon-ability">${singlePokemon.ability.toUpperCase()}</h4>
-    </div>
-    <div class="stats__container">
-      <h4>Stats</h4>
-      <div class="stats__row">
-        <div class="hp__container">
-          <div class="stats-name">HP</div>
-          <div class="stats-value">${singlePokemon.hp}</div>
-        </div>
-        <div class="atk__container">
-          <div class="stats-name">ATK</div>
-          <div class="stats-value">${singlePokemon.atk}</div>
-        </div>
-        <div class="def__container">
-          <div class="stats-name">DEF</div>
-          <div class="stats-value">${singlePokemon.def}</div>
-        </div>
-        <div class="spa__container">
-          <div class="stats-name">SpA</div>
-          <div class="stats-value">${singlePokemon.spa}</div>
-        </div>
-        <div class="spd__container">
-          <div class="stats-name">SpD</div>
-          <div class="stats-value">${singlePokemon.spd}</div>
-        </div>
-        <div class="speed__container">
-          <div class="stats-name">SPD</div>
-          <div class="stats-value">${singlePokemon.speed}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>`
-    )
-    .join("");
+function sortMoviesByRating(movies) {
+  return movies.sort((a, b) => b.vote_average - a.vote_average);
+}
 
-  document.getElementById("pokedex").innerHTML = pokemonString;
-};
-
-getPokemon();
+function getClassesByRating(rating) {
+  if (rating >= 8) {
+    return "green";
+  } else if (rating >= 5) {
+    return "orange";
+  } else {
+    return;
+  }
+}
+function searchMovie(e){
+    e.preventDefault();
+     const searchValue = search.value;
+    if (searchValue && searchValue !== "") {
+      getMovies(SEARCH_URL+searchValue);
+      searchValue = "";
+    } else {
+      window.location.reload();
+    }
+  };
