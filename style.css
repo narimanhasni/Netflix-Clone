@@ -1,6 +1,6 @@
 :root{
-        --primary-color: #026A90;
-        --secondary-color: lightgray;
+        --primary-color: Black;
+        --secondary-color: grey;
      }
      *{
          box-sizing: border-box;
